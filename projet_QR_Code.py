@@ -105,3 +105,4 @@ carre_bas_gauche[0] = [0]*8
 # et les mettre dans 3 sous-listes puis les comparer avec les modèles.
 # Ensuite, si les sous-listes sont égales aux modèles, c'est que le QR Code est dans le bon sens.
 # Sinon, on effectue une rotation du QR Code puis on revérifier que ça correspond aux modèles, etc...
+# test
