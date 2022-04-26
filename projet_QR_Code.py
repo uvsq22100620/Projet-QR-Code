@@ -76,33 +76,53 @@ def verifCarres(m):
     """ Fonction qui renvoie True si les carrés du QR Code (en haut à droite, en haut à gauche et en bas à gauche) 
     sont bien placés, sinon, elle renvoie False"""
 
-### Modèles des carrés
+    ### Modèles des carrés
 
-carre = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
+    carre = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
 
-carre_haut_gauche = carre.copy()
+    carre_haut_gauche = carre.copy()
 
-for i in range(len(carre)):
-    carre_haut_gauche[i].append(0)
-carre_haut_gauche.append([0]*8)
-
-
-carre_haut_droite = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
-
-for i in range(len(carre)):
-    carre_haut_droite[i].insert(0, 0)
-carre_haut_droite.append([0]*8)
+    for i in range(len(carre)):
+        carre_haut_gauche[i].append(0)
+    carre_haut_gauche.append([0]*8)
 
 
-carre_bas_gauche = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
+    carre_haut_droite = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
 
-for i in range(len(carre)):
-    carre_bas_gauche[i].append(0)
-carre_bas_gauche.insert(0, 0)
-carre_bas_gauche[0] = [0]*8
+    for i in range(len(carre)):
+        carre_haut_droite[i].insert(0, 0)
+    carre_haut_droite.append([0]*8)
 
-# Il faut maintenant récupérer la zone du QR Code où doivent s'organiser les pixels pour former les carrés,
-# et les mettre dans 3 sous-listes puis les comparer avec les modèles.
-# Ensuite, si les sous-listes sont égales aux modèles, c'est que le QR Code est dans le bon sens.
-# Sinon, on effectue une rotation du QR Code puis on revérifier que ça correspond aux modèles, etc...
-# test
+
+    carre_bas_gauche = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
+
+    for i in range(len(carre)):
+        carre_bas_gauche[i].append(0)
+    carre_bas_gauche.insert(0, 0)
+    carre_bas_gauche[0] = [0]*8
+
+    # Il faut maintenant récupérer la zone du QR Code où doivent s'organiser les pixels pour former les carrés,
+    # et les mettre dans 3 sous-listes puis les comparer avec les modèles.
+    # Ensuite, si les sous-listes sont égales aux modèles, c'est que le QR Code est dans le bon sens.
+    # Sinon, on effectue une rotation du QR Code puis on revérifier que ça correspond aux modèles, etc...
+    # test
+
+
+
+def sousListe(matrice, i1, j1, i2, j2):
+    """ Créer une sous-liste correspondant à un endroit particulier de la matrice prise en 
+    entrée (récupère les informations de cette matrice);
+    (i1, j1) sont les coordonnées du coin supérieur gauche de la sous-matrice (coordonnées 
+    du 1er élément) et (i2, j2) sont celles du coin inférieur droit (dernier élément)"""
+
+    nbr_lignes = i2 - i1 + 1
+    nbr_colonnes = j2 - j1 + 1
+
+    ss_liste = [[0]* nbr_colonnes for b in range(nbr_lignes)]
+
+    for x in range(nbr_lignes):
+        for y in range(nbr_colonnes):
+            ss_liste[x][y] = matrice[i1+x][j1+y]
+
+
+    return ss_liste
