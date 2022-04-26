@@ -7,7 +7,56 @@
 # #########################################
 
 
+##### Import des librairies
+
+
+import PIL as pil
+from PIL import Image
+from PIL import ImageTk 
+
+
+##### Variables globales et constantes
+
+global mat_QRC
+
+filename = "qr_code_ssfiltre_num.png"
+
 ##### Fonctions
+
+
+def nbrCol(matrice):
+    """ Fonction qui retourne le nombre de colonnes d'une matrice"""
+
+    return len(matrice[0])
+
+
+
+def nbrLig(matrice):
+    """ Fonction qui retourne le nombre de lignes d'une matrice"""
+
+    return len(matrice)
+
+
+
+def saving(matPix, filename):#sauvegarde l'image contenue dans matpix dans le fichier filename
+							 #utiliser une extension png pour que la fonction fonctionne sans perte d'information
+    toSave=pil.Image.new(mode = "1", size = (nbrCol(matPix),nbrLig(matPix)))
+    for i in range(nbrLig(matPix)):
+        for j in range(nbrCol(matPix)):
+            toSave.putpixel((j,i),matPix[i][j])
+    toSave.save(filename)
+
+
+
+def loading(filename):#charge le fichier image filename et renvoie une matrice de 0 et de 1 qui représente 
+					  #l'image en noir et blanc
+    toLoad=pil.Image.open(filename)
+    mat=[[0]*toLoad.size[0] for k in range(toLoad.size[1])]
+    for i in range(toLoad.size[1]):
+        for j in range(toLoad.size[0]):
+            mat[i][j]= 0 if toLoad.getpixel((j,i)) == 0 else 1
+    return mat
+
 
 
 def bits_de_correction(liste):
@@ -101,13 +150,19 @@ def verifCarres(m):
     carre_bas_gauche.insert(0, 0)
     carre_bas_gauche[0] = [0]*8
 
-    # Il faut maintenant récupérer la zone du QR Code où doivent s'organiser les pixels pour former les carrés,
-    # et les mettre dans 3 sous-listes puis les comparer avec les modèles.
-    # Ensuite, si les sous-listes sont égales aux modèles, c'est que le QR Code est dans le bon sens.
-    # Sinon, on effectue une rotation du QR Code puis on revérifier que ça correspond aux modèles, etc...
-    # test
 
+    ### Vérification du placement des carrés
 
+    if (sousListe(mat_QRC, 0, 0, 7, 7) == carre_haut_gauche) and (sousListe(mat_QRC, 0, (nbrCol(mat_QRC)-7), 7, nbrCol(mat_QRC)) == carre_haut_droite) and (sousListe(mat_QRC, nbrLig(mat_QRC)-7, 0, nbrLig(mat_QRC), 7) == carre_bas_gauche):
+        return True
+
+    return False
+    
+
+def rotation(matrice):
+    """ Tourne la matrice de 90° vers la ? """  # droite ou gauche ? peu importe
+    pass
+       
 
 def sousListe(matrice, i1, j1, i2, j2):
     """ Créer une sous-liste correspondant à un endroit particulier de la matrice prise en 
@@ -126,3 +181,9 @@ def sousListe(matrice, i1, j1, i2, j2):
 
 
     return ss_liste
+
+
+
+##### Boucle principale
+
+mat_QRC = loading(filename)
