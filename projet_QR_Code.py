@@ -4,24 +4,34 @@
 # COUSTILLAS Laurédane
 # LEFEVRE Laura
 # https://github.com/uvsq22100620/Projet-QR-Code.git
-# #########################################
+##########################################
 
 
+##########################################
 ##### Import des librairies
+##########################################
 
 
 import PIL as pil
 from PIL import Image
 from PIL import ImageTk 
 
+import tkinter as tk
 
+
+##########################################
 ##### Variables globales et constantes
+##########################################
+
 
 global mat_QRC
 
 filename = "qr_code_ssfiltre_num.png"
 
+
+##########################################
 ##### Fonctions
+##########################################
 
 
 def nbrCol(matrice):
@@ -57,6 +67,71 @@ def loading(filename):#charge le fichier image filename et renvoie une matrice d
             mat[i][j]= 0 if toLoad.getpixel((j,i)) == 0 else 1
     return mat
 
+
+
+def sousListe(matrice, i1, j1, i2, j2):
+    """ Créer une sous-liste correspondant à un endroit particulier de la matrice prise en 
+    entrée (récupère les informations de cette matrice);
+    (i1, j1) sont les coordonnées du coin supérieur gauche de la sous-matrice (coordonnées 
+    du 1er élément) et (i2, j2) sont celles du coin inférieur droit (dernier élément)"""
+
+    nbr_lignes = i2 - i1 + 1
+    nbr_colonnes = j2 - j1 + 1
+
+    ss_liste = [[0]* nbr_colonnes for b in range(nbr_lignes)]
+
+    for x in range(nbr_lignes):
+        for y in range(nbr_colonnes):
+            ss_liste[x][y] = matrice[i1+x][j1+y]
+
+
+    return ss_liste
+
+
+
+def verifCarres(m):
+    """ Fonction qui renvoie True si les carrés du QR Code (en haut à droite, en haut à gauche et en bas à gauche) 
+    sont bien placés, sinon, elle renvoie False"""
+
+    ### Modèles des carrés
+
+    carre = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
+
+    carre_haut_gauche = carre.copy()
+
+    for i in range(len(carre)):
+        carre_haut_gauche[i].append(0)
+    carre_haut_gauche.append([0]*8)
+
+
+    carre_haut_droite = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
+
+    for i in range(len(carre)):
+        carre_haut_droite[i].insert(0, 0)
+    carre_haut_droite.append([0]*8)
+
+
+    carre_bas_gauche = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
+
+    for i in range(len(carre)):
+        carre_bas_gauche[i].append(0)
+    carre_bas_gauche.insert(0, 0)
+    carre_bas_gauche[0] = [0]*8
+
+
+    ### Vérification du placement des carrés
+
+    if (sousListe(mat_QRC, 0, 0, 7, 7) == carre_haut_gauche) and (sousListe(mat_QRC, 0, (nbrCol(mat_QRC)-7), 7, nbrCol(mat_QRC)) == carre_haut_droite) and (sousListe(mat_QRC, nbrLig(mat_QRC)-7, 0, nbrLig(mat_QRC), 7) == carre_bas_gauche):
+        return True
+
+    return False
+    
+
+
+def rotation(matrice):
+    """ Tourne la matrice de 90° vers la ? """  # droite ou gauche ? peu importe
+    pass
+       
 
 
 def bits_de_correction(liste):
@@ -120,70 +195,14 @@ def correction_erreurs(liste):
             m3 = 0
 
 
-
-def verifCarres(m):
-    """ Fonction qui renvoie True si les carrés du QR Code (en haut à droite, en haut à gauche et en bas à gauche) 
-    sont bien placés, sinon, elle renvoie False"""
-
-    ### Modèles des carrés
-
-    carre = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
-
-    carre_haut_gauche = carre.copy()
-
-    for i in range(len(carre)):
-        carre_haut_gauche[i].append(0)
-    carre_haut_gauche.append([0]*8)
-
-
-    carre_haut_droite = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
-
-    for i in range(len(carre)):
-        carre_haut_droite[i].insert(0, 0)
-    carre_haut_droite.append([0]*8)
-
-
-    carre_bas_gauche = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
-
-    for i in range(len(carre)):
-        carre_bas_gauche[i].append(0)
-    carre_bas_gauche.insert(0, 0)
-    carre_bas_gauche[0] = [0]*8
-
-
-    ### Vérification du placement des carrés
-
-    if (sousListe(mat_QRC, 0, 0, 7, 7) == carre_haut_gauche) and (sousListe(mat_QRC, 0, (nbrCol(mat_QRC)-7), 7, nbrCol(mat_QRC)) == carre_haut_droite) and (sousListe(mat_QRC, nbrLig(mat_QRC)-7, 0, nbrLig(mat_QRC), 7) == carre_bas_gauche):
-        return True
-
-    return False
-    
-
-def rotation(matrice):
-    """ Tourne la matrice de 90° vers la ? """  # droite ou gauche ? peu importe
-    pass
-       
-
-def sousListe(matrice, i1, j1, i2, j2):
-    """ Créer une sous-liste correspondant à un endroit particulier de la matrice prise en 
-    entrée (récupère les informations de cette matrice);
-    (i1, j1) sont les coordonnées du coin supérieur gauche de la sous-matrice (coordonnées 
-    du 1er élément) et (i2, j2) sont celles du coin inférieur droit (dernier élément)"""
-
-    nbr_lignes = i2 - i1 + 1
-    nbr_colonnes = j2 - j1 + 1
-
-    ss_liste = [[0]* nbr_colonnes for b in range(nbr_lignes)]
-
-    for x in range(nbr_lignes):
-        for y in range(nbr_colonnes):
-            ss_liste[x][y] = matrice[i1+x][j1+y]
-
-
-    return ss_liste
-
-
-
+##########################################
 ##### Boucle principale
+##########################################
+
 
 mat_QRC = loading(filename)
+
+racine = tk.Tk()
+racine.title("Lecture de QR Code")
+
+racine.mainloop()
