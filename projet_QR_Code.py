@@ -28,6 +28,8 @@ global mat_QRC
 
 filename = "qr_code_ssfiltre_num.png"
 
+TAILLE_CARRE = 8
+
 
 ##########################################
 ##### Fonctions
@@ -89,49 +91,97 @@ def sousListe(matrice, i1, j1, i2, j2):
 
 
 
-def verifCarres(m):
-    """ Fonction qui renvoie True si les carrés du QR Code (en haut à droite, en haut à gauche et en bas à gauche) 
-    sont bien placés, sinon, elle renvoie False"""
+def creationMotif(n):
+    """ Créer le motif du carré présent en haut à gauche, en haut à droite et
+    en bas à gauche du QR Code ; c'est un carré dont le côté est de taille n"""
+    # il faut que n >= 4
 
-    ### Modèles des carrés
+    l0 = []
+    for k in range(n):
+        l0.append(0)
 
-    carre = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
+    l1 = [0]
+    for k in range(n-1):
+        l1.append(1)
 
-    carre_haut_gauche = carre.copy()
+    l2 = [0,1]
+    for k in range(n-3):
+        l2.append(0)
+    l2.append(1)
 
-    for i in range(len(carre)):
-        carre_haut_gauche[i].append(0)
-    carre_haut_gauche.append([0]*8)
-
-
-    carre_haut_droite = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
-
-    for i in range(len(carre)):
-        carre_haut_droite[i].insert(0, 0)
-    carre_haut_droite.append([0]*8)
-
-
-    carre_bas_gauche = [[1, 1, 1, 1, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1], [1, 0, 1, 1, 1, 0, 1],[1, 0, 1, 1, 1, 0, 1], [1, 0, 1, 1, 1, 0, 1], [1, 0, 0, 0, 0, 0, 1], [1, 1, 1, 1, 1, 1, 1]]
-
-    for i in range(len(carre)):
-        carre_bas_gauche[i].append(0)
-    carre_bas_gauche.insert(0, 0)
-    carre_bas_gauche[0] = [0]*8
+    l3 = [0,1,0]
+    for k in range(n-5):
+        l3.append(1)
+    l3.append(0)
+    l3.append(1)
 
 
-    ### Vérification du placement des carrés
+    mat = [l0]
+    mat.append(l1)
+    mat.append(l2)
+    for k in range(n-5):
+        mat.append(l3)
+    mat.append(l2)
+    mat.append(l1)
 
-    if (sousListe(mat_QRC, 0, 0, 7, 7) == carre_haut_gauche) and (sousListe(mat_QRC, 0, (nbrCol(mat_QRC)-7), 7, nbrCol(mat_QRC)) == carre_haut_droite) and (sousListe(mat_QRC, nbrLig(mat_QRC)-7, 0, nbrLig(mat_QRC), 7) == carre_bas_gauche):
-        return True
-
-    return False
+    return mat
     
 
 
 def rotation(matrice):
-    """ Tourne la matrice de 90° vers la ? """  # droite ou gauche ? peu importe
-    pass
+    """ Tourne la matrice de 90° vers la droite """  # droite peu importe
+    
+    mat_res = [[0]*nbrLig(matrice) for i in range(nbrCol(matrice))]
+
+    for i in range(nbrLig(matrice)):
+        for j in range(nbrCol(matrice)):
+            mat_res[i][j] = matrice[nbrLig(matrice)-1-j][i]
+
+    return mat_res
        
+
+
+def verifCarre(matrice, n):
+    """ Vérifie si le QR Code est dans le bon sens. Si ce n'est pas le cas, on effectue une rotation,
+    jusqu'à ce qu'il soit positionné dans le bon sens. Les symboles carrés sont de taille n"""
+
+    sous_liste = sousListe(matrice, 17, 17, 24, 24)
+    carre = creationMotif(n)
+
+    while sous_liste == carre:
+        rotation(matrice)
+        sous_liste = sousListe(matrice, 17, 17, 24, 24)
+
+    return matrice
+
+
+
+def verifPointillesHaut(m):
+    """ Vérifie s'il y a bien des pointillés entre les carrés en haut (sur la 7ème ligne)"""
+
+    for j in range(8, 17):      
+        if j % 2 == 0:                  # les pixels dans une colonne paire doivent être noirs
+            if m[6, j] == 0:
+                return False
+        elif j % 2 == 1:
+            if m[6,j] == 1:
+                return False
+    return True
+
+
+
+def verifPointillesGauche(m):
+    """ Vérifie s'il y a bien des pointillés entre les carrés à gauche (sur la 7ème colonne)"""
+
+    for i in range(8, 17):
+        if i % 2 == 0:              # les pixels dans une ligne paire doivent être noirs
+            if m[i,6] == 0:
+                return False
+        elif i % 2 == 1:
+            if m[i,6] == 1:
+                return False
+    return True
+
 
 
 def bits_de_correction(liste):
@@ -193,6 +243,24 @@ def correction_erreurs(liste):
             m3 = 1
         else:
             m3 = 0
+
+
+
+def messageErreur():
+    """ Affiche dans un label un message d'erreur lorsque le QR Code n'est pas conforme"""
+    pass
+
+
+
+def scanner(matrice):
+    """Fonction qui permet la lecture du QR Code"""        # docstring à compléter
+    pass                                                   # fonction utilisée par le bouton 'scanner'
+    ## verifCarre(matrice)
+    ## if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
+    ##    utilisation des fonctions pour la lecture du QR Code
+    ## else:
+    ##    messageErreur()
+
 
 
 ##########################################
