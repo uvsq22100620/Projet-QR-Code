@@ -26,7 +26,7 @@ import tkinter as tk
 
 global mat_QRC
 
-filename = "qr_code_ssfiltre_num.png"
+filename = "Exemples/qr_code_ssfiltre_num.png"
 
 TAILLE_CARRE = 8
 
@@ -68,6 +68,11 @@ def loading(filename):#charge le fichier image filename et renvoie une matrice d
         for j in range(toLoad.size[0]):
             mat[i][j]= 0 if toLoad.getpixel((j,i)) == 0 else 1
     return mat
+
+
+
+def fermer_fenetre():
+    racine.destroy()
 
 
 
@@ -268,9 +273,41 @@ def scanner(matrice):
 ##########################################
 
 
-mat_QRC = loading(filename)
+#mat_QRC = loading(filename)
 
 racine = tk.Tk()
 racine.title("Lecture de QR Code")
+
+### Création des widgets
+
+bouton_charger = tk.Button(racine, text='charger')
+
+bouton_scanner = tk.Button(racine, text='scanner')  #command=lambda: scanner(mat_QRC)
+
+bouton_sauvegarder = tk.Button(racine, text='sauvegarder')
+
+bouton_quitter = tk.Button(racine, text='quitter', command=fermer_fenetre)
+
+
+affichage_image = tk.Canvas(racine, height=300, width=300, bg='red')
+
+affichage_texte = tk.Label(racine, text='')
+
+
+### Positionnement des widgets
+
+bouton_charger.grid(column=0, row=0)
+
+bouton_scanner.grid(column=0, row=1)
+
+bouton_sauvegarder.grid(column=0, row=2)
+
+bouton_quitter.grid(column=0, row=3)
+
+
+affichage_image.grid(column=1, row=0, rowspan=3)
+
+affichage_texte.grid(column=1, row=3)
+
 
 racine.mainloop()
