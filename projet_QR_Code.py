@@ -26,6 +26,8 @@ import tkinter as tk
 
 global mat_QRC
 
+type_donnees = 0
+
 filename = "Exemples/qr_code_ssfiltre_num.png"
 
 TAILLE_CARRE = 8
@@ -222,6 +224,20 @@ def lectureBloc(liste_de_blocs):
         res.append(l2)
 
     return res
+
+
+
+def typeDonnees(matrice):
+    """ Lit le pixel à la position (24,8) et renvoie le type de données"""
+
+    global type_donnees
+
+    if matrice[24][8] == 0:
+        type_donnees = 'image'
+    else:
+        type_donnees = 'texte'
+
+    return type_donnees
 
 
 
