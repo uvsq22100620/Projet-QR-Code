@@ -208,6 +208,23 @@ def divisionBlocs(matrice):
 
 
 
+def lectureBloc(liste_de_blocs):
+    """ Transforme une matrice contenant les blocs du QR Code en des listes de 7 bits,
+    les 4 premiers sont les bits de message et les 3 derniers sont les bits de correction"""
+
+
+    res = []
+
+    for b in liste_de_blocs:
+        l1 = [b[1][6], b[0][6], b[1][5], b[0][5], b[1][4], b[0][4], b[1][3]]
+        res.append(l1)
+        l2 = [b[0][3], b[1][2], b[0][2], b[1][1], b[1][0], b[1][0], b[0][0]]
+        res.append(l2)
+
+    return res
+
+
+
 def bits_de_correction(liste):
     """ Fonction qui renvoie les 3 bits de contrôle d'une liste de 4 bits"""
 
