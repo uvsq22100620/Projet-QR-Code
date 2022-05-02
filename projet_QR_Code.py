@@ -305,18 +305,24 @@ def correction_erreurs(liste):
 
 def messageErreur():
     """ Affiche dans un label un message d'erreur lorsque le QR Code n'est pas conforme"""
-    pass
+    
+    affichage_texte.itemconfigure(text="le QR Code n'est pas conforme")
 
 
 
 def scanner(matrice):
     """Fonction qui permet la lecture du QR Code"""        # docstring à compléter
-    pass                                                   # fonction utilisée par le bouton 'scanner'
-    ## verifCarre(matrice)
-    ## if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
-    ##    utilisation des fonctions pour la lecture du QR Code
-    ## else:
-    ##    messageErreur()
+                                                        # fonctions utilisées par le bouton 'scanner'
+    verifCarre(matrice)
+
+    if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
+                            ##    utilisation des fonctions pour la lecture du QR Code
+        if type_donnees(matrice) == 'image':
+            pass
+        else:       # si c'est un texte
+            pass
+    else:
+        messageErreur()
 
 
 
