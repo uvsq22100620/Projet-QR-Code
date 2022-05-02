@@ -189,6 +189,25 @@ def verifPointillesGauche(m):
 
 
 
+def divisionBlocs(matrice):
+    """ Divise la partie du QR Code contenant les informations
+    à récupérer en 16 blocs de 14 bits chacun"""
+
+    blocs = [0 for b in range(16)]
+
+    ind_blocs_droite = [0,3,4,7,8,11,12,15]
+    ind_blocs_gauche = [1,2,5,6,9,10,13,14]
+
+    for k in range(8):      # pour les blocs de droite
+        blocs[ind_blocs_droite[k]] = sousListe(matrice, (23-(k*2)), 18, (24-(k*2)), 24)
+
+    for k in range(8):      # pour les blocs de gauche
+        blocs[ind_blocs_gauche[k]] = sousListe(matrice, (23-(k*2)), 11, (24-(k*2), 17))
+
+    return blocs
+
+
+
 def bits_de_correction(liste):
     """ Fonction qui renvoie les 3 bits de contrôle d'une liste de 4 bits"""
 
