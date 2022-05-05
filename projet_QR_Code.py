@@ -123,7 +123,7 @@ def sousListe(matrice, i1, j1, i2, j2):
 
 
 def creationMotif(n=8):
-
+    '''Fonction permettant la création du motif avec pour model le carre en bas a droite'''
     l0 = [1]*n
     l1 = [1] + [0]*(n-1)
     l2 = [1,0] + [1]*(n-4) + [1,0]
