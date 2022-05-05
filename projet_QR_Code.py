@@ -17,6 +17,8 @@ from PIL import Image
 from PIL import ImageTk 
 
 import tkinter as tk
+from tkinter import filedialog
+from tkinter import simpledialog
 
 
 ##########################################
@@ -24,14 +26,15 @@ import tkinter as tk
 ##########################################
 
 
-global mat_QRC
-
 type_donnees = 0
 
 filename = "Exemples/qr_code_ssfiltre_num.png"
 
 TAILLE_CARRE = 8
 
+create = True
+NomImgCourante=""
+nomImgDebut=""
 
 ##########################################
 ##### Fonctions
@@ -71,6 +74,28 @@ def loading(filename):#charge le fichier image filename et renvoie une matrice d
             mat[i][j]= 0 if toLoad.getpixel((j,i)) == 0 else 1
     return mat
 
+
+def charger(widget):
+    '''Fonction permettant de charger un QR Code et qui l'affiche'''
+
+    global create, nomImgDebut, NomImgCourante, canvas, dessin, photo
+
+    filename=filedialog.askopenfile(mode='rb', title='Choose a file')
+    img = pil.Image.open(filename)
+    NomImgCourante = filename.name
+    nomImgDebut = filename.name
+    photo = ImageTk.PhotoImage(img)
+    if create:
+        canvas = tk.Canvas(widget, width=img.size[0], height=img.size[1])
+        dessin = canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+        canvas.grid(row=0, column=1, rowspan=4, columnspan=2)
+        create=False
+
+    else:
+        canvas.grid_forget()
+        canvas=tk.Canvas(widget, width=img.size[0], height=img.size[1])
+        dessin=canvas.create_image(0, 0, anchor=tk.NW, image=photo)
+        canvas.grid(row=0, column=1, rowspan=4, columnspan=2)
 
 
 def fermer_fenetre():
@@ -334,11 +359,11 @@ def scanner(matrice):
 #mat_QRC = loading(filename)
 
 racine = tk.Tk()
-racine.title("Lecture de QR Code")
+racine.title("Projet : Lecture de QR Code")
 
 ### Création des widgets
 
-bouton_charger = tk.Button(racine, text='charger')
+bouton_charger = tk.Button(racine, text='charger', command=lambda:charger(racine))
 
 bouton_scanner = tk.Button(racine, text='scanner')  #command=lambda: scanner(mat_QRC)
 
@@ -347,7 +372,7 @@ bouton_sauvegarder = tk.Button(racine, text='sauvegarder')
 bouton_quitter = tk.Button(racine, text='quitter', command=fermer_fenetre)
 
 
-affichage_image = tk.Canvas(racine, height=300, width=300, bg='red')
+#affichage_image = tk.Canvas(racine, height=300, width=300, bg='red')
 
 affichage_texte = tk.Label(racine, text='')
 
@@ -363,7 +388,7 @@ bouton_sauvegarder.grid(column=0, row=2)
 bouton_quitter.grid(column=0, row=3)
 
 
-affichage_image.grid(column=1, row=0, rowspan=3)
+#affichage_image.grid(column=1, row=0, rowspan=3)
 
 affichage_texte.grid(column=1, row=3)
 
