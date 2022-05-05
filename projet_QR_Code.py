@@ -326,8 +326,28 @@ def creationFiltre11():
 
 def filtre(matrice):
     """ Lit les pixels en position (22,8) et (23,8) puis applique le filtre
-    correspondant et renvoie la matrice correspondant"""
-    pass
+    correspondant et renvoie la matrice correspondante"""
+    
+    filtre = []
+    mat_res = [[0]*nbrCol(matrice) for b in range(nbrLig(matrice))]
+
+    if (matrice[22][8] == 0) and (matrice[23][8] == 0):
+        filtre = creationFiltre00
+    elif (matrice[22][8] == 0) and (matrice[23][8] == 1):
+        filtre = creationFiltre01
+    elif (matrice[22][8] == 1) and (matrice[23][8] == 0):
+        filtre = creationFiltre10
+    else:
+        filtre = creationFiltre11
+
+    
+    for i in range(nbrLig(matrice)):
+        for j in range(nbrCol(matrice)):
+            mat_res[i][j] == matrice[i][j] ^ filtre[i][j]
+
+    return mat_res
+
+    
 
 
 def scanner(matrice):
