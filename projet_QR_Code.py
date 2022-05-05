@@ -55,8 +55,8 @@ def nbrLig(matrice):
 
 
 
-def saving(matPix, filename):#sauvegarde l'image contenue dans matpix dans le fichier filename
-							 #utiliser une extension png pour que la fonction fonctionne sans perte d'information
+def saving(matPix, filename):
+    '''Sauvegarde l'image contenue dans matpix dans le fichier filename utiliser une extension png pour que la fonction fonctionne sans perte d'information'''
     toSave=pil.Image.new(mode = "1", size = (nbrCol(matPix),nbrLig(matPix)))
     for i in range(nbrLig(matPix)):
         for j in range(nbrCol(matPix)):
@@ -65,8 +65,8 @@ def saving(matPix, filename):#sauvegarde l'image contenue dans matpix dans le fi
 
 
 
-def loading(filename):#charge le fichier image filename et renvoie une matrice de 0 et de 1 qui représente 
-					  #l'image en noir et blanc
+def loading(filename):
+    ''' Charge le fichier image filename et renvoie une matrice de 0 et de 1 qui représente l'image en noir et blanc'''
     toLoad=pil.Image.open(filename)
     mat=[[0]*toLoad.size[0] for k in range(toLoad.size[1])]
     for i in range(toLoad.size[1]):
@@ -101,7 +101,15 @@ def charger(widget):
 def fermer_fenetre():
     racine.destroy()
 
+def creationMotif(n=8):
+    '''Fonction permettant la création du motif avec pour model le carre en bas a droite'''
+    l0 = [1]*n
+    l1 = [1] + [0]*(n-1)
+    l2 = [1,0] + [1]*(n-4) + [1,0]
+    l3 = [1, 0, 1] + [0]*(n-5) + [1, 0]
 
+    mat = [l0] + [l1] + [l2] + [l3]*(n-5) + [l2] + [l1]
+    return mat
 
 def sousListe(matrice, i1, j1, i2, j2):
     """ Créer une sous-liste correspondant à un endroit particulier de la matrice prise en 
@@ -120,17 +128,6 @@ def sousListe(matrice, i1, j1, i2, j2):
 
 
     return ss_liste
-
-
-def creationMotif(n=8):
-    '''Fonction permettant la création du motif avec pour model le carre en bas a droite'''
-    l0 = [1]*n
-    l1 = [1] + [0]*(n-1)
-    l2 = [1,0] + [1]*(n-4) + [1,0]
-    l3 = [1, 0, 1] + [0]*(n-5) + [1, 0]
-
-    mat = [l0] + [l1] + [l2] + [l3]*(n-5) + [l2] + [l1]
-    return mat
 
 
 def rotation(matrice):
