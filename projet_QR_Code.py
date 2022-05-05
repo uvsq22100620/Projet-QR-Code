@@ -304,24 +304,54 @@ def messageErreur():
     affichage_texte.itemconfigure(text="le QR Code n'est pas conforme")
 
 
-def creationFiltre00():
+
+def creationFiltre00(matrice):
     """ Génère le filtre 00 (entièrement noir)"""
-    pass
+    
+    return [[0]*nbrCol(matrice) for b in range(nbrLig(matrice))]
 
 
-def creationFiltre01():
+
+def creationFiltre01(matrice):
     """ Génère le filtre 01 (damier avec la case en haut à gauche noire)"""
-    pass
+    
+    f = [[0]*nbrCol(matrice) for b in range(nbrLig(matrice))]
+
+    for i in range(nbrCol(f)):
+        for j in range(nbrLig(f)):
+            if (i+j) % 2 != 0:
+                f[i][j] = 1
+
+    return f
 
 
-def creationFiltre10():
+
+def creationFiltre10(matrice):
     """ Génère le filtre 10 (des lignes horizontales alternées noires et blanches, la plus haute étant noire)"""
-    pass
+    
+    f = [[0]*nbrCol(matrice) for b in range(nbrLig(matrice))]
+
+    for i in range(nbrCol(f)):
+        for j in range(nbrLig(f)):
+            if (i % 2) != 0:
+                f[i][j] = 1
+
+    return f
 
 
-def creationFiltre11():
+
+def creationFiltre11(matrice):
     """ Génère le filtre 11 (des lignes verticales alternées noires et blanches, la plus à gauche étant noire)"""
-    pass
+    
+    f = [[0]*nbrCol(matrice) for b in range(nbrLig(matrice))]
+
+    for i in range(nbrCol(f)):
+        for j in range(nbrLig(f)):
+            if (j % 2) != 0:
+                f[i][j] = 1
+
+    return f
+
 
 
 def filtre(matrice):
@@ -332,13 +362,13 @@ def filtre(matrice):
     mat_res = [[0]*nbrCol(matrice) for b in range(nbrLig(matrice))]
 
     if (matrice[22][8] == 0) and (matrice[23][8] == 0):
-        filtre = creationFiltre00
+        filtre = creationFiltre00(matrice)
     elif (matrice[22][8] == 0) and (matrice[23][8] == 1):
-        filtre = creationFiltre01
+        filtre = creationFiltre01(matrice)
     elif (matrice[22][8] == 1) and (matrice[23][8] == 0):
-        filtre = creationFiltre10
+        filtre = creationFiltre10(matrice)
     else:
-        filtre = creationFiltre11
+        filtre = creationFiltre11(matrice)
 
     
     for i in range(nbrLig(matrice)):
