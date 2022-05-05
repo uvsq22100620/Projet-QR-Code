@@ -258,9 +258,9 @@ def typeDonnees(matrice):
     global type_donnees
 
     if matrice[24][8] == 0:
-        type_donnees = 'image'
+        type_donnees = 'numeriques'
     else:
-        type_donnees = 'texte'
+        type_donnees = 'brutes'
 
     return type_donnees
 
@@ -372,7 +372,6 @@ bouton_sauvegarder = tk.Button(racine, text='sauvegarder')
 bouton_quitter = tk.Button(racine, text='quitter', command=fermer_fenetre)
 
 
-#affichage_image = tk.Canvas(racine, height=300, width=300, bg='red')
 
 affichage_texte = tk.Label(racine, text='')
 
@@ -387,8 +386,6 @@ bouton_sauvegarder.grid(column=0, row=2)
 
 bouton_quitter.grid(column=0, row=3)
 
-
-#affichage_image.grid(column=1, row=0, rowspan=3)
 
 affichage_texte.grid(column=1, row=3)
 
