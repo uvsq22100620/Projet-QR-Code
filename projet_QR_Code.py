@@ -304,6 +304,31 @@ def messageErreur():
     affichage_texte.itemconfigure(text="le QR Code n'est pas conforme")
 
 
+def creationFiltre00():
+    """ Génère le filtre 00 (entièrement noir)"""
+    pass
+
+
+def creationFiltre01():
+    """ Génère le filtre 01 (damier avec la case en haut à gauche noire)"""
+    pass
+
+
+def creationFiltre10():
+    """ Génère le filtre 10 (des lignes horizontales alternées noires et blanches, la plus haute étant noire)"""
+    pass
+
+
+def creationFiltre11():
+    """ Génère le filtre 11 (des lignes verticales alternées noires et blanches, la plus à gauche étant noire)"""
+    pass
+
+
+def filtre(matrice):
+    """ Lit les pixels en position (22,8) et (23,8) puis applique le filtre
+    correspondant et renvoie la matrice correspondant"""
+    pass
+
 
 def scanner(matrice):
     """Fonction qui permet la lecture du QR Code"""        # docstring à compléter
@@ -312,7 +337,8 @@ def scanner(matrice):
 
     if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
                             ##    utilisation des fonctions pour la lecture du QR Code
-        if type_donnees(matrice) == 'image':
+        filtre(matrice)
+        if type_donnees(matrice) == 'numeriques':
             pass
         else:       # si c'est un texte
             pass
