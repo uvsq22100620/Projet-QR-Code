@@ -122,42 +122,15 @@ def sousListe(matrice, i1, j1, i2, j2):
     return ss_liste
 
 
+def creationMotif(n=8):
 
-def creationMotif(n):
-    """ Créer le motif du carré présent en haut à gauche, en haut à droite et
-    en bas à gauche du QR Code ; c'est un carré dont le côté est de taille n"""
-    # il faut que n >= 4
+    l0 = [1]*n
+    l1 = [1] + [0]*(n-1)
+    l2 = [1,0] + [1]*(n-4) + [1,0]
+    l3 = [1, 0, 1] + [0]*(n-5) + [1, 0]
 
-    l0 = []
-    for k in range(n):
-        l0.append(0)
-
-    l1 = [0]
-    for k in range(n-1):
-        l1.append(1)
-
-    l2 = [0,1]
-    for k in range(n-3):
-        l2.append(0)
-    l2.append(1)
-
-    l3 = [0,1,0]
-    for k in range(n-5):
-        l3.append(1)
-    l3.append(0)
-    l3.append(1)
-
-
-    mat = [l0]
-    mat.append(l1)
-    mat.append(l2)
-    for k in range(n-5):
-        mat.append(l3)
-    mat.append(l2)
-    mat.append(l1)
-
+    mat = [l0] + [l1] + [l2] + [l3]*(n-5) + [l2] + [l1]
     return mat
-    
 
 
 def rotation(matrice):
