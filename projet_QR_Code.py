@@ -101,6 +101,7 @@ def charger(widget):
 def fermer_fenetre():
     racine.destroy()
 
+
 def creationMotif(n=8):
     '''Fonction permettant la création du motif avec pour model le carre en bas a droite'''
     l0 = [1]*n
@@ -110,6 +111,7 @@ def creationMotif(n=8):
 
     mat = [l0] + [l1] + [l2] + [l3]*(n-5) + [l2] + [l1]
     return mat
+
 
 def sousListe(matrice, i1, j1, i2, j2):
     """ Créer une sous-liste correspondant à un endroit particulier de la matrice prise en 
@@ -222,20 +224,6 @@ def lectureBloc(liste_de_blocs):
 
 
 
-def typeDonnees(matrice):
-    """ Lit le pixel à la position (24,8) et renvoie le type de données"""
-
-    global type_donnees
-
-    if matrice[24][8] == 0:
-        type_donnees = 'numeriques'
-    else:
-        type_donnees = 'brutes'
-
-    return type_donnees
-
-
-
 def bits_de_correction(liste):
     """ Fonction qui renvoie les 3 bits de contrôle d'une liste de 4 bits"""
 
@@ -296,12 +284,14 @@ def correction_erreurs(liste):
         else:
             m3 = 0
 
+    return [m1, m2, m3, m4]
+
 
 
 def messageErreur():
     """ Affiche dans un label un message d'erreur lorsque le QR Code n'est pas conforme"""
     
-    affichage_texte.itemconfigure(text="le QR Code n'est pas conforme")
+    affichage_texte.config(text="le QR Code n'est pas conforme")
 
 
 
@@ -377,22 +367,65 @@ def filtre(matrice):
 
     return mat_res
 
-    
+
+
+def conversionBase(nombre):
+    """ Conversion d'un nombre en binaire en un nombre en base 16"""
+    pass
+
+
+
+def afficheBaseHexa(liste):
+    """ Affiche un nombre en hexadécimal """
+
+    message = ''
+
+    for v in liste:
+        if v == 10:
+            message += 'A'
+        elif v == 11:
+            message += 'B'
+        elif v == 12:
+            message += 'C'
+        elif v == 13:
+            message += 'D'
+        elif v == 14:
+            message += 'E'
+        elif v == 15:
+            message += 'F'
+        else :
+            message += str(v)
+    return message
 
 
 def scanner(matrice):
-    """Fonction qui permet la lecture du QR Code"""        # docstring à compléter
-                                                        # fonctions utilisées par le bouton 'scanner'
-    verifCarre(matrice)
+    """Fonction qui permet la lecture du QR Code"""
 
+    verifCarre(matrice)
+    # le QR Code est positionné dans le bon sens
     if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
-                            ##    utilisation des fonctions pour la lecture du QR Code
+        # on vérifie que le QR Code est conforme
         filtre(matrice)
-        if type_donnees(matrice) == 'numeriques':
-            pass
-        else:       # si c'est un texte
-            pass
+        # le filtre est appliqué au QR Code
+        info7bits = divisionBlocs(lectureBloc(matrice))
+        # on récupère les informations dans des listes de 7 bits
+        info4bits = []
+        for k in range(len(info7bits)):
+            # chaque liste de 7 bits est corrigée est devient une liste de 4 bits
+            info4bits.append(correction_erreurs(info7bits[k]))
+        message = ''
+        if matrice[24][8] == 0:
+            # si ce sont des données numériques
+            for m in range(len(info4bits)):     # range(0, len(...), 2)
+                # l = info4bits[m] + info4bits[m+1]
+                message += afficheBaseHexa(conversionBase(info4bits[m]))        # besoin str() ?
+        else:
+            for m in range(len(info4bits)):
+                l = info4bits[m] + info4bits[m+1]
+                # message +=                    # besoin str() ?
+        affichage_texte.config(text=message)
     else:
+        # si le QR Code n'est pas conforme, un message d'erreur est affiché
         messageErreur()
 
 
