@@ -28,8 +28,6 @@ from tkinter import simpledialog
 
 type_donnees = 0
 
-filename = "Exemples/qr_code_ssfiltre_num.png"
-
 TAILLE_CARRE = 8
 
 create = True
@@ -369,35 +367,6 @@ def filtre(matrice):
 
 
 
-def conversionBase(nombre):
-    """ Conversion d'un nombre en binaire en un nombre en base 16"""
-    pass
-
-
-
-def afficheBaseHexa(liste):
-    """ Affiche un nombre en hexadécimal """
-
-    message = ''
-
-    for v in liste:
-        if v == 10:
-            message += 'A'
-        elif v == 11:
-            message += 'B'
-        elif v == 12:
-            message += 'C'
-        elif v == 13:
-            message += 'D'
-        elif v == 14:
-            message += 'E'
-        elif v == 15:
-            message += 'F'
-        else :
-            message += str(v)
-    return message
-
-
 def scanner(matrice):
     """Fonction qui permet la lecture du QR Code"""
 
@@ -413,16 +382,14 @@ def scanner(matrice):
         for k in range(len(info7bits)):
             # chaque liste de 7 bits est corrigée est devient une liste de 4 bits
             info4bits.append(correction_erreurs(info7bits[k]))
-        message = ''
         if matrice[24][8] == 0:
             # si ce sont des données numériques
-            for m in range(len(info4bits)):     # range(0, len(...), 2)
-                # l = info4bits[m] + info4bits[m+1]
-                message += afficheBaseHexa(conversionBase(info4bits[m]))        # besoin str() ?
-        else:
             for m in range(len(info4bits)):
+                message = hex(int(str(info4bits[m]),2))
+        else:
+            for m in range(0, len(info4bits), 2):
                 l = info4bits[m] + info4bits[m+1]
-                # message +=                    # besoin str() ?
+                message = chr(int(str(info4bits[l]),2))
         affichage_texte.config(text=message)
     else:
         # si le QR Code n'est pas conforme, un message d'erreur est affiché
@@ -435,16 +402,16 @@ def scanner(matrice):
 ##########################################
 
 
-#mat_QRC = loading(filename)
-
 racine = tk.Tk()
 racine.title("Projet : Lecture de QR Code")
+
+mat_QRC = loading(NomImgCourante)
 
 ### Création des widgets
 
 bouton_charger = tk.Button(racine, text='charger', command=lambda:charger(racine))
 
-bouton_scanner = tk.Button(racine, text='scanner')  #command=lambda: scanner(mat_QRC)
+bouton_scanner = tk.Button(racine, text='scanner', command=lambda: scanner(mat_QRC))
 
 bouton_sauvegarder = tk.Button(racine, text='sauvegarder')
 
