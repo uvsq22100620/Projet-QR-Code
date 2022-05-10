@@ -28,13 +28,14 @@ from tkinter import simpledialog
 
 type_donnees = 0
 
-filename = "Exemples/qr_code_ssfiltre_num.png"
 
 TAILLE_CARRE = 8
 
 create = True
 NomImgCourante=""
 nomImgDebut=""
+
+mat_QRC = []
 
 ##########################################
 ##### Fonctions
@@ -75,12 +76,11 @@ def loading(filename):
     return mat
 
 
-def charger(widget):
+def charger(widget, filename):
     '''Fonction permettant de charger un QR Code et qui l'affiche'''
 
     global create, nomImgDebut, NomImgCourante, canvas, dessin, photo
 
-    filename=filedialog.askopenfile(mode='rb', title='Choose a file')
     img = pil.Image.open(filename)
     NomImgCourante = filename.name
     nomImgDebut = filename.name
@@ -88,14 +88,24 @@ def charger(widget):
     if create:
         canvas = tk.Canvas(widget, width=img.size[0], height=img.size[1])
         dessin = canvas.create_image(0, 0, anchor=tk.NW, image=photo)
-        canvas.grid(row=0, column=1, rowspan=4, columnspan=2)
+        canvas.grid(row=0, column=2)
         create=False
 
     else:
         canvas.grid_forget()
         canvas=tk.Canvas(widget, width=img.size[0], height=img.size[1])
         dessin=canvas.create_image(0, 0, anchor=tk.NW, image=photo)
-        canvas.grid(row=0, column=1, rowspan=4, columnspan=2)
+        canvas.grid(row=0, column=2)
+
+
+def init_matQRC():
+    '''Fonction permettant d'initialiser la matrice du QR Code'''
+    global mat_QRC
+
+    filename = filedialog.askopenfile(mode='rb', title='Choose a file')
+    mat_QRC = loading(filename)
+    charger(racine, filename)
+    print(mat_QRC)
 
 
 def fermer_fenetre():
@@ -106,9 +116,9 @@ def creationMotif(n=8):
     l0 = [1]*n
     l1 = [1] + [0]*(n-1)
     l2 = [1,0] + [1]*(n-4) + [1,0]
-    l3 = [1, 0, 1] + [0]*(n-5) + [1, 0]
+    l3 = [1,0,1] + [0]*(n-5) + [1,0]
 
-    mat = [l0] + [l1] + [l2] + [l3]*(n-5) + [l2] + [l1]
+    mat = [l0]+[l1]+[l2]+[l3]*(n-5)+[l2]+[l1]
     return mat
 
 def sousListe(matrice, i1, j1, i2, j2):
@@ -325,15 +335,14 @@ def scanner(matrice):
 ##### Boucle principale
 ##########################################
 
-
-#mat_QRC = loading(filename)
-
 racine = tk.Tk()
 racine.title("Projet : Lecture de QR Code")
 
 ### Création des widgets
 
-bouton_charger = tk.Button(racine, text='charger', command=lambda:charger(racine))
+#bouton_charger = tk.Button(racine, text='charger', command=lambda:charger(racine))
+bouton_charger = tk.Button(racine, text='charger', command=init_matQRC)
+
 
 bouton_scanner = tk.Button(racine, text='scanner')  #command=lambda: scanner(mat_QRC)
 
@@ -358,6 +367,5 @@ bouton_quitter.grid(column=0, row=3)
 
 
 affichage_texte.grid(column=1, row=3)
-
 
 racine.mainloop()
