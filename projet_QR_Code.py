@@ -171,28 +171,28 @@ def verifCarre(matrice, n):
 
 
 def verifPointillesHaut(m):
-    """ Vérifie s'il y a bien des pointillés entre les carrés en haut (sur la 7ème ligne)"""
+    """ Vérifie s'il y a bien des pointillés entre les carrés en haut (sur la 8ème ligne)"""
 
     for j in range(8, 17):      
         if j % 2 == 0:                  # les pixels dans une colonne paire doivent être noirs
-            if m[6, j] == 0:
+            if m[7][j] == 0:
                 return False
         elif j % 2 == 1:
-            if m[6,j] == 1:
+            if m[7][j] == 1:
                 return False
     return True
 
 
 
 def verifPointillesGauche(m):
-    """ Vérifie s'il y a bien des pointillés entre les carrés à gauche (sur la 7ème colonne)"""
+    """ Vérifie s'il y a bien des pointillés entre les carrés à gauche (sur la 8ème colonne)"""
 
     for i in range(8, 17):
         if i % 2 == 0:              # les pixels dans une ligne paire doivent être noirs
-            if m[i,6] == 0:
+            if m[i][7] == 0:
                 return False
         elif i % 2 == 1:
-            if m[i,6] == 1:
+            if m[i][7] == 1:
                 return False
     return True
 
@@ -211,7 +211,7 @@ def divisionBlocs(matrice):
         blocs[ind_blocs_droite[k]] = sousListe(matrice, (23-(k*2)), 18, (24-(k*2)), 24)
 
     for k in range(8):      # pour les blocs de gauche
-        blocs[ind_blocs_gauche[k]] = sousListe(matrice, (23-(k*2)), 11, (24-(k*2), 17))
+        blocs[ind_blocs_gauche[k]] = sousListe(matrice, (23-(k*2)), 11, (24-(k*2)), 17)
 
     return blocs
 
@@ -363,12 +363,16 @@ def filtre(matrice):
 
     if (matrice[22][8] == 0) and (matrice[23][8] == 0):
         filtre = creationFiltre00(matrice)
+        print('f00')
     elif (matrice[22][8] == 0) and (matrice[23][8] == 1):
         filtre = creationFiltre01(matrice)
+        print('f01')
     elif (matrice[22][8] == 1) and (matrice[23][8] == 0):
         filtre = creationFiltre10(matrice)
+        print('f10')
     else:
         filtre = creationFiltre11(matrice)
+        print('f11')
 
     
     for i in range(nbrLig(matrice)):
@@ -382,30 +386,35 @@ def filtre(matrice):
 def scanner(matrice):
     """Fonction qui permet la lecture du QR Code"""
 
-    verifCarre(matrice)
+    verifCarre(matrice, TAILLE_CARRE)
     # le QR Code est positionné dans le bon sens
-    if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
+    #if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
         # on vérifie que le QR Code est conforme
-        filtre(matrice)
+    filtre(matrice)
         # le filtre est appliqué au QR Code
-        info7bits = divisionBlocs(lectureBloc(matrice))
+    info7bits = lectureBloc(divisionBlocs(matrice))
         # on récupère les informations dans des listes de 7 bits
-        info4bits = []
-        for k in range(len(info7bits)):
+    info4bits = []
+    for k in range(len(info7bits)):
             # chaque liste de 7 bits est corrigée est devient une liste de 4 bits
-            info4bits.append(correction_erreurs(info7bits[k]))
-        if matrice[24][8] == 0:
+        info4bits.append(correction_erreurs(info7bits[k]))
+    if matrice[24][8] == 0:
+        print('données numériques')
             # si ce sont des données numériques
-            for m in range(len(info4bits)):
-                message = hex(int(str(info4bits[m]),2))
-        else:
-            for m in range(0, len(info4bits), 2):
-                l = info4bits[m] + info4bits[m+1]
-                message = chr(int(str(info4bits[l]),2))
-        affichage_texte.config(text=message)
+        for m in range(len(info4bits)):
+            message = hex(int(str(info4bits[m]),2))
     else:
+        print('données brutes')
+        for m in range(0, len(info4bits), 2):
+            l = info4bits[m] + info4bits[m+1]
+            bin = ''
+            for c in l:
+                bin += str(c)
+            message = chr(int(str(bin),2))
+    affichage_texte.config(text=message)
+    #else:
         # si le QR Code n'est pas conforme, un message d'erreur est affiché
-        messageErreur()
+        #messageErreur()
 
 
 
