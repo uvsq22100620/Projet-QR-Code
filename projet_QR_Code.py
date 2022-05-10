@@ -413,14 +413,8 @@ def scanner(matrice):
 ##### Boucle principale
 ##########################################
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 251baa16710ba7d28b1ea6f1bfe0c4f802c42415
 racine = tk.Tk()
 racine.title("Projet : Lecture de QR Code")
-
-mat_QRC = loading(NomImgCourante)
 
 ### Création des widgets
 
