@@ -143,7 +143,7 @@ def sousListe(matrice, i1, j1, i2, j2):
 
 
 def rotation(matrice):
-    """ Tourne la matrice de 90° vers la droite """  # droite peu importe
+    """ Tourne la matrice de 90° vers la droite """
     
     mat_res = [[0]*nbrLig(matrice) for i in range(nbrCol(matrice))]
 
@@ -152,6 +152,7 @@ def rotation(matrice):
             mat_res[i][j] = matrice[nbrLig(matrice)-1-j][i]
 
     return mat_res
+
        
 
 
@@ -402,11 +403,15 @@ def scanner(matrice):
         for k in range(len(info7bits)):
                 # chaque liste de 7 bits est corrigée est devient une liste de 4 bits
             info4bits.append(correction_erreurs(info7bits[k]))
+            message = ''
         if matrice[24][8] == 0:
             print('données numériques')
                 # si ce sont des données numériques
-            for m in range(len(info4bits)):
-                message = hex(int(str(info4bits[m]),2))
+            for m in info4bits:
+                bin = ''
+                for c in m:
+                    bin += str(c)
+                message += str(hex(int(bin,2)))
         else:
             print('données brutes')
             for m in range(0, len(info4bits), 2):
@@ -414,11 +419,11 @@ def scanner(matrice):
                 bin = ''
                 for c in l:
                     bin += str(c)
-                message = chr(int(str(bin),2))
+                message += chr(int(str(bin),2))
         affichage_texte.config(text=message)
     #else:
         # si le QR Code n'est pas conforme, un message d'erreur est affiché
-        #messageErreur()
+        #return messageErreur("Erreur : Le QR_Code n'est pas conforme")
 
     
 
