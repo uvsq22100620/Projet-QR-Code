@@ -113,7 +113,7 @@ def fermer_fenetre():
 
 
 def creationMotif(n=8):
-    '''Fonction permettant la création du motif avec pour model le carre en bas a droite'''
+    '''Fonction permettant la création du motif avec pour modèle le carré en bas à droite'''
     l0 = [1]*n
     l1 = [1] + [0]*(n-1)
     l2 = [1,0] + [1]*(n-4) + [1,0]
@@ -160,13 +160,12 @@ def verifCarre(matrice, n):
     """ Vérifie si le QR Code est dans le bon sens. Si ce n'est pas le cas, on effectue une rotation,
     jusqu'à ce qu'il soit positionné dans le bon sens. Les symboles carrés sont de taille n"""
 
-    sous_liste = sousListe(matrice, 17, 17, 24, 24)
+    sous_liste = sousListe(matrice, len(matrice)-n, len(matrice)-n, len(matrice)-1, len(matrice)-1)
     carre = creationMotif(n)
 
     while sous_liste == carre:
-        rotation(matrice)
-        sous_liste = sousListe(matrice, 17, 17, 24, 24)
-
+        matrice = rotation(matrice)
+        sous_liste = sousListe(matrice, len(matrice)-n, len(matrice)-n, len(matrice)-1, len(matrice)-1)
     return matrice
 
 
@@ -176,10 +175,10 @@ def verifPointillesHaut(m):
 
     for j in range(8, 17):      
         if j % 2 == 0:                  # les pixels dans une colonne paire doivent être noirs
-            if m[7][j] == 0:
+            if m[6][j] == 0:
                 return False
         elif j % 2 == 1:
-            if m[7][j] == 1:
+            if m[6][j] == 1:
                 return False
     return True
 
@@ -190,10 +189,10 @@ def verifPointillesGauche(m):
 
     for i in range(8, 17):
         if i % 2 == 0:              # les pixels dans une ligne paire doivent être noirs
-            if m[i][7] == 0:
+            if m[i][6] == 0:
                 return False
         elif i % 2 == 1:
-            if m[i][7] == 1:
+            if m[i][6] == 1:
                 return False
     return True
 
