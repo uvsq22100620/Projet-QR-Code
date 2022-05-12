@@ -1,15 +1,15 @@
-# Projet-QR-Code
-Projet IN 202 QR Code
+# Projet-QR-Code- IN202
+
 # LE CORRE Camille
 # LEFEVRE Laura
 # COUSTILLAS Laurédane
 # LDDBI
 
-Lecture d'un QR Code:
+### Lecture d'un QR Code:
 
 Ce projet a pour objectif de créer un programme qui permette la lecture d'un QR Code. Ce programme est écrit en python et utilise l'interface Tkinter pour charger un QR Code et le lire. Le programme est constitué de nombreuses fonctions qui permettent de charger un QR Code, de le vérifier puis de lire son contenu en le scannant.
 
-Qu'est-ce qu'un QR Code :
+### Qu'est-ce qu'un QR Code :
 
 Un QR Code est une sorte de code-barres avec des informations stockées à l'intérieur sous formes binaires, afin qu'elles puissent être lues par un ordinateur. Il est constitué de pixels noirs et blancs dans une matrice et possèdent 3 carrés noirs entourés d'une bande blanche dans chaque coin, sauf celui en bas à droite, ce qui permet à l'ordinateur de détecter son sens de lecture. Il y a également un ligne de pointillés qui relient les 2 carrés à gauches et les 2 carrés en haut.
 
@@ -17,7 +17,7 @@ La lecture d'un QR Code s'effectue par bloc de 14 bits (2 fois 7 bits, codés av
 Chaque bloc contient 8 bits d'informations. Le pixel à la position (24, 8) code le type de données. S’il est à 0 il s’agit de données numériques : 8 bits codent deux symboles hexadécimaux. S’il est à 1, il s’agit de données brutes, 8 bits seront interprétés comme un code ASCII.
 
 
-Les fonctions du programme :
+### Les fonctions du programme :
 
 La fonction charger permet d'accéder à des QR Code enregistrés dans notre ordinateur via l'interface Tkinter.
 
@@ -35,7 +35,7 @@ Nous avons donc créer une fonction pour chaque filtre afin de générer le filt
 
 La fonction scanner permet la lecture du QR Code. En effet,  elle vérifie qu'un QR Code est chargé dans l'interface et qu'il est dans le bon sens, puis elle récupère les informations contenues dans les blocs et les affiche.
  
-Interface graphique:
+### Interface graphique:
 
 La fenêtre Tkinter est constituée des boutons charger (qui permet d'importer un QR Code dans l'interface), scanner (qui permet de lire le QR Code) et sauvegarder ( qui sauvegarde une image en noir et blanc).
 
