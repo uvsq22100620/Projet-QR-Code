@@ -252,7 +252,7 @@ def bits_de_correction(liste):
     c2 = m1 ^ m3 ^ m4
     c3 = m2 ^ m3 ^ m4 
 
-    return [m1, m2, m3, m4, c1, c2, c3]
+    return [c1, c2, c3]
 
 
 
@@ -272,11 +272,11 @@ def correction_erreurs(liste):
 
     controle = bits_de_correction([m1, m2, m3, m4])
 
-    if controle[4] != c1:
+    if controle[0] != c1:
         erreurs[0] = 1
-    if controle[5] != c2:
+    if controle[1] != c2:
         erreurs[1] = 1
-    if controle[6] != c3:
+    if controle[2] != c3:
         erreurs[2] = 1
 
     if (erreurs[0] == 1) and (erreurs[1] == 1) and (erreurs[2] == 1):
@@ -369,16 +369,16 @@ def filtre(matrice):
 
     if (matrice[22][8] == 0) and (matrice[23][8] == 0):
         filtre = creationFiltre00(matrice)
-        print('f00')
+        print('filtre 00')
     elif (matrice[22][8] == 0) and (matrice[23][8] == 1):
         filtre = creationFiltre01(matrice)
-        print('f01')
+        print('filtre 01')
     elif (matrice[22][8] == 1) and (matrice[23][8] == 0):
         filtre = creationFiltre10(matrice)
-        print('f10')
+        print('filtre 10')
     else:
         filtre = creationFiltre11(matrice)
-        print('f11')
+        print('filtre 11')
 
     
     for i in range(nbrLig(matrice)):
@@ -406,13 +406,13 @@ def scanner(matrice):
         return messageErreur("Erreur : Aucun QR_Code n'a été chargé")
         
     else:
-        verifCarre(matrice, TAILLE_CARRE)
+        matrice = verifCarre(matrice, TAILLE_CARRE)
         # le QR Code est positionné dans le bon sens
         #if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
             # on vérifie que le QR Code est conforme
-        filtre(matrice)
+        #filtre(matrice)
             # le filtre est appliqué au QR Code
-        info7bits = lectureBloc(divisionBlocs(matrice))
+        info7bits = lectureBloc(divisionBlocs(filtre(matrice)))
             # on récupère les informations dans des listes de 7 bits
         info4bits = []
         for k in range(len(info7bits)):
