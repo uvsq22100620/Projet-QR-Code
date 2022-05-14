@@ -48,12 +48,10 @@ def nbrCol(matrice):
     return len(matrice[0])
 
 
-
 def nbrLig(matrice):
     """ Fonction qui retourne le nombre de lignes d'une matrice"""
 
     return len(matrice)
-
 
 
 def saving(matPix, filename):
@@ -63,7 +61,6 @@ def saving(matPix, filename):
         for j in range(nbrCol(matPix)):
             toSave.putpixel((j,i),matPix[i][j])
     toSave.save(filename)
-
 
 
 def loading(filename):
@@ -99,7 +96,7 @@ def charger(widget, filename):
 
 
 def init_matQRC():
-    '''Fonction permettant d'initialiser la matrice du QR Code'''
+    '''Fonction permettant d'initialiser la matrice du QR Code chargé'''
     global mat_QRC
 
     filename = filedialog.askopenfile(mode='rb', title='Choose a file')
@@ -114,11 +111,14 @@ def fermer_fenetre():
 
 def creationMotif(n=8):
     '''Fonction permettant la création du motif avec pour modèle le carré en bas à droite'''
+    
+    #Creation de 4 listes différentes représentant les différentes lignes du motif
     l0 = [1]*n
     l1 = [1] + [0]*(n-1)
     l2 = [1,0] + [1]*(n-4) + [1,0]
     l3 = [1,0,1] + [0]*(n-5) + [1,0]
 
+    #concatenation des listes pour representer le motif avec une liste imbriquee
     mat = [l0]+[l1]+[l2]+[l3]*(n-5)+[l2]+[l1]
     return mat
 
@@ -153,21 +153,22 @@ def rotation(matrice):
 
     return mat_res
 
-       
-
 
 def verifCarre(matrice, n):
     """ Vérifie si le QR Code est dans le bon sens. Si ce n'est pas le cas, on effectue une rotation,
     jusqu'à ce qu'il soit positionné dans le bon sens. Les symboles carrés sont de taille n"""
 
-    sous_liste = sousListe(matrice, len(matrice)-n, len(matrice)-n, len(matrice)-1, len(matrice)-1)
+    c1 = len(matrice)-n
+    c2 = len(matrice)-1
+    
+    sous_liste = sousListe(matrice, c1, c1, c2, c2)
     carre = creationMotif(n)
 
     while sous_liste == carre:
         matrice = rotation(matrice)
-        sous_liste = sousListe(matrice, len(matrice)-n, len(matrice)-n, len(matrice)-1, len(matrice)-1)
-    return matrice
+        sous_liste = sousListe(matrice, c1, c1, c2, c2)
 
+    return matrice
 
 
 def verifPointillesHaut(m):
@@ -175,13 +176,12 @@ def verifPointillesHaut(m):
 
     for j in range(8, 17):      
         if j % 2 == 0:                  # les pixels dans une colonne paire doivent être noirs
-            if m[6][j] == 0:
-                return False
-        elif j % 2 == 1:
             if m[6][j] == 1:
                 return False
+        elif j % 2 == 1:
+            if m[6][j] == 0:
+                return False
     return True
-
 
 
 def verifPointillesGauche(m):
@@ -189,13 +189,12 @@ def verifPointillesGauche(m):
 
     for i in range(8, 17):
         if i % 2 == 0:              # les pixels dans une ligne paire doivent être noirs
-            if m[i][6] == 0:
-                return False
-        elif i % 2 == 1:
             if m[i][6] == 1:
                 return False
+        elif i % 2 == 1:
+            if m[i][6] == 0:
+                return False
     return True
-
 
 
 def divisionBlocs(matrice):
