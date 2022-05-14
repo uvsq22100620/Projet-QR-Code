@@ -202,6 +202,7 @@ def divisionBlocs(matrice):
     """ Divise la partie du QR Code contenant les informations
     à récupérer en 16 blocs de 14 bits chacun"""
 
+    nb_blocs = nombreBlocs(matrice)
     blocs = [0 for b in range(16)]
 
     ind_blocs_droite = [0,3,4,7,8,11,12,15]
@@ -212,6 +213,11 @@ def divisionBlocs(matrice):
 
     for k in range(8):      # pour les blocs de gauche
         blocs[ind_blocs_gauche[k]] = sousListe(matrice, (23-(k*2)), 11, (24-(k*2)), 17)
+
+    for k in range(16-nb_blocs):
+        del(blocs[-(k+1)])
+
+    affichage_blocs.config(text='Le QR_Code contient ' + str(nb_blocs) + ' bloc(s)')
 
     return blocs
 
@@ -383,6 +389,16 @@ def filtre(matrice):
 
 
 
+def nombreBlocs(matrice):
+    """ Récupère le nombre de blocs où est stocké le message"""
+
+    nb_blocs = str(matrice[13][0]) + str(matrice[14][0]) + str(matrice[15][0]) + str(matrice[16][0]) + str(matrice[17][0])
+    return int(nb_blocs, 2)
+
+
+    
+
+
 def scanner(matrice):
     """Fonction qui permet la lecture du QR Code"""
 
@@ -439,30 +455,22 @@ racine.title("Projet : Lecture de QR Code")
 
 #bouton_charger = tk.Button(racine, text='charger', command=lambda:charger(racine))
 bouton_charger = tk.Button(racine, text='charger', command=init_matQRC)
-
-
 bouton_scanner = tk.Button(racine, text='scanner', command=lambda: scanner(mat_QRC))
-
 bouton_sauvegarder = tk.Button(racine, text='sauvegarder')
-
 bouton_quitter = tk.Button(racine, text='quitter', command=fermer_fenetre)
 
-
-
 affichage_texte = tk.Label(racine, text='')
+affichage_blocs = tk.Label(racine, text='')
 
 
 ### Positionnement des widgets
 
 bouton_charger.grid(column=0, row=0)
-
 bouton_scanner.grid(column=0, row=1)
-
 bouton_sauvegarder.grid(column=0, row=2)
-
 bouton_quitter.grid(column=0, row=3)
 
-
 affichage_texte.grid(column=1, row=3)
+affichage_blocs.grid(column=1, row=4)
 
 racine.mainloop()
