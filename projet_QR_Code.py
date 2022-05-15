@@ -449,6 +449,8 @@ def scanner(matrice):
             for c in m:
                 bin += str(c)
             message += str(hex(int(bin,2)))
+        message = modif_hexa(message)
+
     else:
         affichage_donnees.config(text='données : brutes')
         for m in range(0, len(matrice_corrigee), 2):
@@ -460,8 +462,14 @@ def scanner(matrice):
 
     affichage_message.config(text=message)
 
+def modif_hexa(message):
+    '''Fonction permettant de modifer le message en hexadecimal enlevant les 0x renvoyer par la fonction hex() et en mettant en majuscule les lettres'''
 
-
+    message_hex = message.replace("0x", '')
+    message_hex = message_hex.upper()
+   
+    return message_hex
+    
 
 ##########################################
 ##### Boucle principale
