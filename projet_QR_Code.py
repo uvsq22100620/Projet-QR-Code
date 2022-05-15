@@ -200,7 +200,7 @@ def divisebloc(matrice):
 
     nb_bloc = nombreBlocs(mat_verifiee)
 
-    affichage_texte.config(text = "Le nombre de bloc(s) a decoder est " + str(nb_bloc) + '.')
+    affichage_blocs.config(text = "Le nombre de bloc(s) a decoder est " + str(nb_bloc) + '.')
 
     qr_decode = []
 
@@ -460,7 +460,7 @@ def scanner(matrice):
                 bin += str(c)
             message += chr(int(str(bin),2))
 
-    affichage_message.config(text=message)
+    affichage_message.config(text='Message : ' + message)
 
 def modif_hexa(message):
     '''Fonction permettant de modifer le message en hexadecimal enlevant les 0x renvoyer par la fonction hex() et en mettant en majuscule les lettres'''
