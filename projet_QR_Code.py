@@ -12,6 +12,8 @@
 ##########################################
 
 
+from copy import copy
+from glob import glob
 import PIL as pil
 from PIL import Image
 from PIL import ImageTk 
@@ -33,6 +35,7 @@ NomImgCourante=""
 nomImgDebut=""
 
 mat_QRC = []
+mat_verifiee = copy(mat_QRC)
 
 ##########################################
 ##### Fonctions
@@ -195,7 +198,7 @@ def verifPointillesGauche(m):
 
 def divisebloc(matrice):
 
-    nb_bloc = nombreBlocs(mat_QRC)
+    nb_bloc = nombreBlocs(mat_verifiee)
 
     affichage_texte.config(text = "Le nombre de bloc(s) a decoder est " + str(nb_bloc) + '.')
 
@@ -415,20 +418,21 @@ def separe_listes_bloc(matrice):
 
 def scanner(matrice):
     """Fonction qui permet la lecture du QR Code"""
+    global mat_verifiee
 
     #On verifie qu'un QR_Code a ete charge, sinon on renvoie un message d'erreur
     if mat_QRC == [] :
         return messageErreur("Erreur : Aucun QR_Code n'a été chargé")
         
     #On verifie que le QR_Code est dans le bon sens, sinon il subit une orientation jusqu'à obtenir le bon sens
-    matrice = verifCarre(matrice, TAILLE_CARRE)
+    mat_verifiee = verifCarre(matrice, TAILLE_CARRE)
 
     #On verifie que le QR_Code est conforme, sinon on renvoie un message d'erreur
-    if (verifPointillesHaut(matrice) == False) or (verifPointillesGauche(matrice) == False):
+    if (verifPointillesHaut(mat_verifiee) == False) or (verifPointillesGauche(mat_verifiee) == False):
         return messageErreur("Erreur : Le QR_Code n'est pas conforme")            
             
     #On applique le filtre au QR Code
-    m_filtre = filtre(matrice)
+    m_filtre = filtre(mat_verifiee)
 
 
     #On lit la nouvelle matrice dans le bon ordre et on obtient une matrice avec des listes de 14 bits. 
