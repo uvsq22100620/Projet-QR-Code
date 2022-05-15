@@ -197,6 +197,8 @@ def divisebloc(matrice):
 
     nb_bloc = nombreBlocs(matrice)
 
+    affichage_texte.config(text = "Le nombre de bloc(s) a decoder est " + str(nb_bloc) + '.')
+
     qr_decode = []
 
     #Liste contenant les coordonnees des differents blocs pour permettre l'appel de la fonction sousListe en fonction du nombre de bloc a lire
