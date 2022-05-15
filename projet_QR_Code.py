@@ -108,20 +108,6 @@ def fermer_fenetre():
     racine.destroy()
 
 
-def creationMotif(n=8):
-    '''Fonction permettant la création du motif avec pour modèle le carré en bas à droite'''
-    
-    #Creation de 4 listes différentes représentant les différentes lignes du motif
-    l0 = [1]*n
-    l1 = [1] + [0]*(n-1)
-    l2 = [1,0] + [1]*(n-4) + [1,0]
-    l3 = [1,0,1] + [0]*(n-5) + [1,0]
-
-    #concatenation des listes pour representer le motif avec une liste imbriquee
-    mat = [l0]+[l1]+[l2]+[l3]*(n-5)+[l2]+[l1]
-    return mat
-
-
 def sousListe(matrice, i1, j1, i2, j2):
     """ Créer une sous-liste correspondant à un endroit particulier de la matrice prise en 
     entrée (récupère les informations de cette matrice);
@@ -139,6 +125,20 @@ def sousListe(matrice, i1, j1, i2, j2):
 
 
     return ss_liste
+
+
+def creationMotif(n=8):
+    '''Fonction permettant la création du motif avec pour modèle le carré en bas à droite'''
+    
+    #Creation de 4 listes différentes représentant les différentes lignes du motif
+    l0 = [1]*n
+    l1 = [1] + [0]*(n-1)
+    l2 = [1,0] + [1]*(n-4) + [1,0]
+    l3 = [1,0,1] + [0]*(n-5) + [1,0]
+
+    #concatenation des listes pour representer le motif avec une liste imbriquee
+    mat = [l0]+[l1]+[l2]+[l3]*(n-5)+[l2]+[l1]
+    return mat
 
 
 def rotation(matrice):
@@ -196,7 +196,31 @@ def verifPointillesGauche(m):
     return True
 
 
+def nombreBlocs(matrice):
+    """ Récupère le nombre de blocs où est stocké le message"""
+
+    nb_blocs = str(matrice[13][0]) + str(matrice[14][0]) + str(matrice[15][0]) + str(matrice[16][0]) + str(matrice[17][0])
+
+    if nb_blocs == '11111' :
+        return 0
+    else :
+        return int(nb_blocs, 2)
+
+
+def separe_listes_bloc(matrice):
+    '''Fonction permettant de creer des listes de 7 bits a partir d'une liste de 14 bits'''
+
+    res = []
+
+    for elt in matrice:
+        res.append(elt[0:7])
+        res.append(elt[7:15])
+
+    return res
+
+
 def divisebloc(matrice):
+    '''Fonction qui permet de lire les différents blocs et bits du QR Code dans le bon ordre'''
 
     nb_bloc = nombreBlocs(mat_verifiee)
 
@@ -311,11 +335,6 @@ def correction_erreurs(matrice):
     return matrice_corrigee
 
 
-def messageErreur(txt:str):
-    """ Affiche dans un label un message d'erreur lorsque le QR Code n'est pas conforme"""
-    
-    affichage_texte.config(text=txt)
-
 
 def creationFiltre00(matrice):
     """ Génère le filtre 00 (entièrement noir)"""
@@ -393,27 +412,19 @@ def filtre(matrice):
     return mat_res
 
 
-def nombreBlocs(matrice):
-    """ Récupère le nombre de blocs où est stocké le message"""
-
-    nb_blocs = str(matrice[13][0]) + str(matrice[14][0]) + str(matrice[15][0]) + str(matrice[16][0]) + str(matrice[17][0])
-
-    if nb_blocs == '11111' :
-        return 0
-    else :
-        return int(nb_blocs, 2)
+def messageErreur(txt:str):
+    """ Affiche dans un label un message d'erreur lorsque le QR Code n'est pas conforme"""
+    
+    affichage_texte.config(text=txt)
 
 
-def separe_listes_bloc(matrice):
-    '''Fonction permettant de creer des listes de 7 bits a partir d'une liste de 14 bits'''
+def modif_hexa(message):
+    '''Fonction permettant de modifer le message en hexadecimal enlevant les 0x renvoyer par la fonction hex() et en mettant en majuscule les lettres'''
 
-    res = []
-
-    for elt in matrice:
-        res.append(elt[0:7])
-        res.append(elt[7:15])
-
-    return res
+    message_hex = message.replace("0x", '')
+    message_hex = message_hex.upper()
+   
+    return message_hex
 
 
 def scanner(matrice):
@@ -462,14 +473,6 @@ def scanner(matrice):
 
     affichage_message.config(text='Message : ' + message)
 
-def modif_hexa(message):
-    '''Fonction permettant de modifer le message en hexadecimal enlevant les 0x renvoyer par la fonction hex() et en mettant en majuscule les lettres'''
-
-    message_hex = message.replace("0x", '')
-    message_hex = message_hex.upper()
-   
-    return message_hex
-    
 
 ##########################################
 ##### Boucle principale
