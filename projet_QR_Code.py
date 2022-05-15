@@ -198,30 +198,50 @@ def verifPointillesGauche(m):
     return True
 
 
-def divisionBlocs(matrice):
-    """ Divise la partie du QR Code contenant les informations
-    à récupérer en 16 blocs de 14 bits chacun"""
+def divisebloc(matrice):
 
-    nb_blocs = nombreBlocs(matrice)
-    blocs = [0 for b in range(16)]
+    nb_bloc = nombreBlocs(matrice)
 
-    ind_blocs_droite = [0,3,4,7,8,11,12,15]
-    ind_blocs_gauche = [1,2,5,6,9,10,13,14]
+    qr_decode = []
 
-    for k in range(8):      # pour les blocs de droite
-        blocs[ind_blocs_droite[k]] = sousListe(matrice, (23-(k*2)), 18, (24-(k*2)), 24)
+    #Liste contenant les coordonnees des differents blocs pour permettre l'appel de la fonction sousListe en fonction du nombre de bloc a lire
+    c_blocs = [(23, 18, 24, 24), (23, 11, 24, 17), (21, 11, 22, 17), (21, 18, 22, 24), (19, 18, 20, 24), (19, 11, 20, 17), (17, 11, 18, 17),
+    (17, 18, 18, 24), (15, 18, 16, 24), (15, 11, 16, 17), (13, 11, 14, 17), (13, 18, 14, 24), (11, 18, 12, 24), (11, 11, 12, 17), (9, 11, 10, 17), (9, 18, 10, 24)]
 
-    for k in range(8):      # pour les blocs de gauche
-        blocs[ind_blocs_gauche[k]] = sousListe(matrice, (23-(k*2)), 11, (24-(k*2)), 17)
+    ind_gauche_droite = [2, 3, 6, 7, 10, 11, 14, 15]    #Numeros des blocs a lire de gauche a droite
+    ind_droite_gauche = [0, 1, 4, 5, 8, 9, 12, 13]      #Numeros des blocs a lire de droite a gauche
 
-    #for k in range(16-nb_blocs):
-    #    del(blocs[-(k+1)])
+    for num_bloc in range(nb_bloc):
+        if num_bloc in ind_droite_gauche:
+            qr_decode.append(lecture_droite_a_gauche(sousListe(matrice, c_blocs[num_bloc][0], c_blocs[num_bloc][1], c_blocs[num_bloc][2], c_blocs[num_bloc][3])))
 
-    #affichage_blocs.config(text='Le QR_Code contient ' + str(nb_blocs) + ' bloc(s)')
+        if num_bloc in ind_gauche_droite:
+            qr_decode.append(lecture_gauche_a_droite(sousListe(matrice, c_blocs[num_bloc][0], c_blocs[num_bloc][1], c_blocs[num_bloc][2], c_blocs[num_bloc][3])))
 
-    return blocs
+    return qr_decode
 
 
+def lecture_droite_a_gauche(matrice):
+    '''Fonction permettant la lecture d'un bloc de droite a gauche'''
+
+    li_bloc = []
+    for i in range(-1, -8, -1):
+        li_bloc.append(matrice[-1][i])
+        li_bloc.append(matrice[0][i])
+
+    return li_bloc
+
+
+def lecture_gauche_a_droite(matrice):
+    '''Fonction permettant la lecture d'un bloc de gauche a droite'''
+
+    li_bloc = []
+    for i in range(7):
+        li_bloc.append(matrice[1][i])
+        li_bloc.append(matrice[0][i])
+
+    return li_bloc
+    
 
 def lectureBloc(liste_de_blocs):
     """ Transforme une matrice contenant les blocs du QR Code en des listes de 7 bits,
@@ -362,12 +382,15 @@ def filtre(matrice):
     if (matrice[22][8] == 0) and (matrice[23][8] == 0):
         filtre = creationFiltre00(matrice)
         affichage_filtre.config(text='filtre : noir (00)')
+
     elif (matrice[22][8] == 0) and (matrice[23][8] == 1):
         filtre = creationFiltre01(matrice)
         affichage_filtre.config(text='filtre : damier (01)')
+
     elif (matrice[22][8] == 1) and (matrice[23][8] == 0):
         filtre = creationFiltre10(matrice)
         affichage_filtre.config(text='filtre : lignes horizontales (10)')
+
     else:
         filtre = creationFiltre11(matrice)
         affichage_filtre.config(text='filtre : lignes verticales (11)')
@@ -409,7 +432,7 @@ def scanner(matrice):
     m_filtre = filtre(matrice)
 
     # on récupère les informations dans des listes de 7 bits
-    info7bits = lectureBloc(divisionBlocs(m_filtre))
+    info7bits = lectureBloc(divisebloc(m_filtre))
     info4bits = []
 
     message = ''
