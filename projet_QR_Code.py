@@ -168,6 +168,7 @@ def verifCarre(matrice, n):
         matrice = rotation(matrice)
         sous_liste = sousListe(matrice, c1, c1, c2, c2)
 
+    affichage_texte.config(text="Le QR Code a été tourné dans le bon sens")
     return matrice
 
 
@@ -216,7 +217,7 @@ def divisionBlocs(matrice):
     #for k in range(16-nb_blocs):
     #    del(blocs[-(k+1)])
 
-    affichage_blocs.config(text='Le QR_Code contient ' + str(nb_blocs) + ' bloc(s)')
+    #affichage_blocs.config(text='Le QR_Code contient ' + str(nb_blocs) + ' bloc(s)')
 
     return blocs
 
