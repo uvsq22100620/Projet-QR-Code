@@ -213,8 +213,8 @@ def divisionBlocs(matrice):
     for k in range(8):      # pour les blocs de gauche
         blocs[ind_blocs_gauche[k]] = sousListe(matrice, (23-(k*2)), 11, (24-(k*2)), 17)
 
-    for k in range(16-nb_blocs):
-        del(blocs[-(k+1)])
+    #for k in range(16-nb_blocs):
+    #    del(blocs[-(k+1)])
 
     affichage_blocs.config(text='Le QR_Code contient ' + str(nb_blocs) + ' bloc(s)')
 
@@ -238,7 +238,6 @@ def lectureBloc(liste_de_blocs):
     return res
 
 
-
 def bits_de_correction(liste):
     """ Fonction qui renvoie les 3 bits de contrôle d'une liste de 4 bits"""
 
@@ -252,7 +251,6 @@ def bits_de_correction(liste):
     c3 = m2 ^ m3 ^ m4 
 
     return [c1, c2, c3]
-
 
 
 def correction_erreurs(liste):
@@ -302,19 +300,16 @@ def correction_erreurs(liste):
     return [m1, m2, m3, m4]
 
 
-
 def messageErreur(txt:str):
     """ Affiche dans un label un message d'erreur lorsque le QR Code n'est pas conforme"""
     
     affichage_texte.config(text=txt)
 
 
-
 def creationFiltre00(matrice):
     """ Génère le filtre 00 (entièrement noir)"""
     
     return [[0]*nbrCol(matrice) for b in range(nbrLig(matrice))]
-
 
 
 def creationFiltre01(matrice):
@@ -330,7 +325,6 @@ def creationFiltre01(matrice):
     return f
 
 
-
 def creationFiltre10(matrice):
     """ Génère le filtre 10 (des lignes horizontales alternées noires et blanches, la plus haute étant noire)"""
     
@@ -344,7 +338,6 @@ def creationFiltre10(matrice):
     return f
 
 
-
 def creationFiltre11(matrice):
     """ Génère le filtre 11 (des lignes verticales alternées noires et blanches, la plus à gauche étant noire)"""
     
@@ -356,7 +349,6 @@ def creationFiltre11(matrice):
                 f[i][j] = 1
 
     return f
-
 
 
 def filtre(matrice):
@@ -387,15 +379,15 @@ def filtre(matrice):
     return mat_res
 
 
-
 def nombreBlocs(matrice):
     """ Récupère le nombre de blocs où est stocké le message"""
 
     nb_blocs = str(matrice[13][0]) + str(matrice[14][0]) + str(matrice[15][0]) + str(matrice[16][0]) + str(matrice[17][0])
-    return int(nb_blocs, 2)
 
-
-    
+    if nb_blocs == '11111' :
+        return 0
+    else :
+        return int(nb_blocs, 2)
 
 
 def scanner(matrice):
@@ -404,40 +396,45 @@ def scanner(matrice):
     if mat_QRC == [] :
         return messageErreur("Erreur : Aucun QR_Code n'a été chargé")
         
+    matrice = verifCarre(matrice, TAILLE_CARRE)
+    # le QR Code est positionné dans le bon sens
+    if (verifPointillesHaut(matrice) == False) or (verifPointillesGauche(matrice) == False):
+        #QR Code non conforme
+        return messageErreur("Erreur : Le QR_Code n'est pas conforme")            
+            
+    #Le QR Code est chargé et conforme
+    #On applique le filtre au QR Code
+    m_filtre = filtre(matrice)
+
+    # on récupère les informations dans des listes de 7 bits
+    info7bits = lectureBloc(divisionBlocs(m_filtre))
+    info4bits = []
+
+    message = ''
+
+    for k in range(len(info7bits)):
+            # chaque liste de 7 bits est corrigée est devient une liste de 4 bits
+        info4bits.append(correction_erreurs(info7bits[k]))
+
+    if matrice[24][8] == 0:
+        print('données numériques')
+            # si ce sont des données numériques
+        for m in info4bits:
+            bin = ''
+            for c in m:
+                bin += str(c)
+            message += str(hex(int(bin,2)))
     else:
-        matrice = verifCarre(matrice, TAILLE_CARRE)
-        # le QR Code est positionné dans le bon sens
-        #if (verifPointillesHaut(matrice) == True) and (verifPointillesGauche(matrice) == True):
-            # on vérifie que le QR Code est conforme
-        #filtre(matrice)
-            # le filtre est appliqué au QR Code
-        info7bits = lectureBloc(divisionBlocs(filtre(matrice)))
-            # on récupère les informations dans des listes de 7 bits
-        info4bits = []
-        for k in range(len(info7bits)):
-                # chaque liste de 7 bits est corrigée est devient une liste de 4 bits
-            info4bits.append(correction_erreurs(info7bits[k]))
-            message = ''
-        if matrice[24][8] == 0:
-            print('données numériques')
-                # si ce sont des données numériques
-            for m in info4bits:
-                bin = ''
-                for c in m:
-                    bin += str(c)
-                message += str(hex(int(bin,2)))
-        else:
-            print('données brutes')
-            for m in range(0, len(info4bits), 2):
-                l = info4bits[m] + info4bits[m+1]
-                bin = ''
-                for c in l:
-                    bin += str(c)
-                message += chr(int(str(bin),2))
-        affichage_texte.config(text=message)
-    #else:
-        # si le QR Code n'est pas conforme, un message d'erreur est affiché
-        #return messageErreur("Erreur : Le QR_Code n'est pas conforme")
+        print('données brutes')
+        for m in range(0, len(info4bits), 2):
+            l = info4bits[m] + info4bits[m+1]
+            bin = ''
+            for c in l:
+                bin += str(c)
+            message += chr(int(str(bin),2))
+    affichage_texte.config(text=message)
+
+    
 
     
 
