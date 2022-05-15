@@ -99,7 +99,6 @@ def init_matQRC():
     filename = filedialog.askopenfile(mode='rb', title='Choose a file')
     mat_QRC = loading(filename)
     charger(racine, filename)
-    print(mat_QRC)
 
 
 def fermer_fenetre():
@@ -384,7 +383,7 @@ def filtre(matrice):
     
     for i in range(nbrLig(matrice)):
         for j in range(nbrCol(matrice)):
-            mat_res[i][j] == matrice[i][j] ^ filtre[i][j]
+            mat_res[i][j] = matrice[i][j] ^ filtre[i][j]
 
     return mat_res
 
@@ -434,12 +433,11 @@ def scanner(matrice):
     #On separe les listes de 14 bits en deux pour appliquer la correction d'erreurs qui lit des listes de 7 bits
     #On corrige ensuite les erreurs
     matrice_corrigee = correction_erreurs(separe_listes_bloc(divisebloc(m_filtre)))
-
     message = ''
 
-    if matrice[24][8] == 0:
-        affichage_donnees.config(text='données : numériques')
-            # si ce sont des données numériques
+    if matrice[24][8] == 0: # si ce sont des données numériques
+        affichage_donnees.config(text='données : numériques') 
+
         for m in matrice_corrigee:
             bin = ''
             for c in m:
