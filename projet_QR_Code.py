@@ -243,21 +243,6 @@ def lecture_gauche_a_droite(matrice):
     return li_bloc
     
 
-def lectureBloc(liste_de_blocs):
-    """ Transforme une matrice contenant les blocs du QR Code en des listes de 7 bits,
-    les 4 premiers sont les bits de message et les 3 derniers sont les bits de correction"""
-
-
-    res = []
-
-    for b in liste_de_blocs:
-        l1 = [b[1][6], b[0][6], b[1][5], b[0][5], b[1][4], b[0][4], b[1][3]]
-        res.append(l1)
-        l2 = [b[0][3], b[1][2], b[0][2], b[1][1], b[1][0], b[1][0], b[0][0]]
-        res.append(l2)
-
-    return res
-
 
 def bits_de_correction(liste):
     """ Fonction qui renvoie les 3 bits de contrôle d'une liste de 4 bits"""
@@ -274,51 +259,57 @@ def bits_de_correction(liste):
     return [c1, c2, c3]
 
 
-def correction_erreurs(liste):
+def correction_erreurs(matrice):
     """ Prend une liste de 7 bits et la corrige s'il y a une erreur"""
 
-    m1 = liste[0]
-    m2 = liste[1]
-    m3 = liste[2]
-    m4 = liste[3]
+    matrice_corrigee = []
 
-    c1 = liste[4]
-    c2 = liste[5]
-    c3 = liste[6]
+    for liste in matrice:
+        
+        m1 = liste[0]
+        m2 = liste[1]
+        m3 = liste[2]
+        m4 = liste[3]
 
-    erreurs = [0, 0, 0]           # liste qui contient les erreurs des bits de contrôle (1 => erreur)
+        c1 = liste[4]
+        c2 = liste[5]
+        c3 = liste[6]
 
-    controle = bits_de_correction([m1, m2, m3, m4])
+        erreurs = [0, 0, 0]           # liste qui contient les erreurs des bits de contrôle (1 => erreur)
 
-    if controle[0] != c1:
-        erreurs[0] = 1
-    if controle[1] != c2:
-        erreurs[1] = 1
-    if controle[2] != c3:
-        erreurs[2] = 1
+        controle = bits_de_correction([m1, m2, m3, m4])
 
-    if (erreurs[0] == 1) and (erreurs[1] == 1) and (erreurs[2] == 1):
-        if m4 == 0:
-            m4 = 1
-        else:
-            m4 = 0
-    elif (erreurs[0] == 1) and (erreurs[1] == 1):
-        if m1 == 0:
-            m1 = 1
-        else:
-            m1 = 0
-    elif (erreurs[0] == 1) and (erreurs[2] == 1):
-        if m2 == 0:
-            m2 = 1
-        else:
-            m2 = 0
-    elif (erreurs[1] == 1) and (erreurs[2] == 1):
-        if m3 == 0:
-            m3 = 1
-        else:
-            m3 = 0
+        if controle[0] != c1:
+            erreurs[0] = 1
+        if controle[1] != c2:
+            erreurs[1] = 1
+        if controle[2] != c3:
+            erreurs[2] = 1
 
-    return [m1, m2, m3, m4]
+        if (erreurs[0] == 1) and (erreurs[1] == 1) and (erreurs[2] == 1):
+            if m4 == 0:
+                m4 = 1
+            else:
+                m4 = 0
+        elif (erreurs[0] == 1) and (erreurs[1] == 1):
+            if m1 == 0:
+                m1 = 1
+            else:
+                m1 = 0
+        elif (erreurs[0] == 1) and (erreurs[2] == 1):
+            if m2 == 0:
+                m2 = 1
+            else:
+                m2 = 0
+        elif (erreurs[1] == 1) and (erreurs[2] == 1):
+            if m3 == 0:
+                m3 = 1
+            else:
+                m3 = 0
+
+        matrice_corrigee.append([m1, m2, m3, m4])
+
+    return matrice_corrigee
 
 
 def messageErreur(txt:str):
@@ -414,54 +405,60 @@ def nombreBlocs(matrice):
         return int(nb_blocs, 2)
 
 
+def separe_listes_bloc(matrice):
+    '''Fonction permettant de creer des listes de 7 bits a partir d'une liste de 14 bits'''
+
+    res = []
+
+    for elt in matrice:
+        res.append(elt[0:7])
+        res.append(elt[7:15])
+
+    return res
+
 def scanner(matrice):
     """Fonction qui permet la lecture du QR Code"""
 
+    #On verifie qu'un QR_Code a ete charge, sinon on renvoie un message d'erreur
     if mat_QRC == [] :
         return messageErreur("Erreur : Aucun QR_Code n'a été chargé")
         
+    #On verifie que le QR_Code est dans le bon sens, sinon il subit une orientation jusqu'à obtenir le bon sens
     matrice = verifCarre(matrice, TAILLE_CARRE)
-    # le QR Code est positionné dans le bon sens
+
+    #On verifie que le QR_Code est conforme, sinon on renvoie un message d'erreur
     if (verifPointillesHaut(matrice) == False) or (verifPointillesGauche(matrice) == False):
-        #QR Code non conforme
         return messageErreur("Erreur : Le QR_Code n'est pas conforme")            
             
-    #Le QR Code est chargé et conforme
     #On applique le filtre au QR Code
-    filtre(matrice)
     m_filtre = filtre(matrice)
 
-    # on récupère les informations dans des listes de 7 bits
-    info7bits = lectureBloc(divisebloc(m_filtre))
-    info4bits = []
+    #On lit la nouvelle matrice dans le bon ordre et on obtient une matrice avec des listes de 14 bits. 
+    #On separe les listes de 14 bits en deux pour appliquer la correction d'erreurs qui lit des listes de 7 bits
+    #On corrige ensuite les erreurs
+    matrice_corrigee = correction_erreurs(separe_listes_bloc(divisebloc(m_filtre)))
 
     message = ''
-
-    for k in range(len(info7bits)):
-            # chaque liste de 7 bits est corrigée est devient une liste de 4 bits
-        info4bits.append(correction_erreurs(info7bits[k]))
 
     if matrice[24][8] == 0:
         affichage_donnees.config(text='données : numériques')
             # si ce sont des données numériques
-        for m in info4bits:
+        for m in matrice_corrigee:
             bin = ''
             for c in m:
                 bin += str(c)
             message += str(hex(int(bin,2)))
     else:
         affichage_donnees.config(text='données : brutes')
-        for m in range(0, len(info4bits), 2):
-            l = info4bits[m] + info4bits[m+1]
+        for m in range(0, len(matrice_corrigee), 2):
+            l = matrice_corrigee[m] + matrice_corrigee[m+1]
             bin = ''
             for c in l:
                 bin += str(c)
             message += chr(int(str(bin),2))
+
     affichage_texte.config(text=message)
 
-    
-
-    
 
 
 
