@@ -195,7 +195,7 @@ def verifPointillesGauche(m):
 
 def divisebloc(matrice):
 
-    nb_bloc = nombreBlocs(matrice)
+    nb_bloc = nombreBlocs(mat_QRC)
 
     affichage_texte.config(text = "Le nombre de bloc(s) a decoder est " + str(nb_bloc) + '.')
 
