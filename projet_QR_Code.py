@@ -26,9 +26,6 @@ from tkinter import simpledialog
 ##########################################
 
 
-type_donnees = 0
-
-
 TAILLE_CARRE = 8
 
 create = True
@@ -167,8 +164,7 @@ def verifCarre(matrice, n):
     while sous_liste == carre:
         matrice = rotation(matrice)
         sous_liste = sousListe(matrice, c1, c1, c2, c2)
-
-    affichage_texte.config(text="Le QR Code a été tourné dans le bon sens")
+    
     return matrice
 
 
@@ -242,7 +238,6 @@ def lecture_gauche_a_droite(matrice):
 
     return li_bloc
     
-
 
 def bits_de_correction(liste):
     """ Fonction qui renvoie les 3 bits de contrôle d'une liste de 4 bits"""
@@ -416,6 +411,7 @@ def separe_listes_bloc(matrice):
 
     return res
 
+
 def scanner(matrice):
     """Fonction qui permet la lecture du QR Code"""
 
@@ -432,6 +428,7 @@ def scanner(matrice):
             
     #On applique le filtre au QR Code
     m_filtre = filtre(matrice)
+
 
     #On lit la nouvelle matrice dans le bon ordre et on obtient une matrice avec des listes de 14 bits. 
     #On separe les listes de 14 bits en deux pour appliquer la correction d'erreurs qui lit des listes de 7 bits
@@ -457,7 +454,7 @@ def scanner(matrice):
                 bin += str(c)
             message += chr(int(str(bin),2))
 
-    affichage_texte.config(text=message)
+    affichage_message.config(text=message)
 
 
 
@@ -477,6 +474,7 @@ bouton_scanner = tk.Button(racine, text='scanner', font = ("helvetica", "15"), c
 bouton_quitter = tk.Button(racine, text='quitter', font = ("helvetica", "15"), command=fermer_fenetre)
 
 affichage_texte = tk.Label(racine, text='', font = ("helvetica", "15"))
+affichage_message = tk.Label(racine, text='', font = ("helvetica", "15"))
 affichage_filtre = tk.Label(racine, text='', font = ("helvetica", "15"))
 affichage_donnees = tk.Label(racine, text='', font = ("helvetica", "15"))
 affichage_blocs = tk.Label(racine, text='', font = ("helvetica", "15"))
@@ -484,14 +482,16 @@ affichage_blocs = tk.Label(racine, text='', font = ("helvetica", "15"))
 
 ### Positionnement des widgets
 
-bouton_charger.grid(column=0, row=0)
-bouton_scanner.grid(column=0, row=1)
-bouton_quitter.grid(column=0, row=3)
+bouton_charger.grid(column=0, row=0, pady=5)
+bouton_scanner.grid(column=0, row=1, pady=5)
+bouton_quitter.grid(column=0, row=3, pady=5)
 
 affichage_texte.grid(column=0, row=4, columnspan=2)
 affichage_filtre.grid(column=0, row=5, columnspan=2)
 affichage_donnees.grid(column=0, row=6, columnspan=2)
 affichage_blocs.grid(column=0, row=7, columnspan=2)
+affichage_message.grid(column=0, row=8, columnspan=2)
 
 
+#Appel principal
 racine.mainloop()
