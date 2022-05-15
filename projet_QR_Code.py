@@ -361,16 +361,16 @@ def filtre(matrice):
 
     if (matrice[22][8] == 0) and (matrice[23][8] == 0):
         filtre = creationFiltre00(matrice)
-        print('filtre 00')
+        affichage_filtre.config(text='filtre : noir (00)')
     elif (matrice[22][8] == 0) and (matrice[23][8] == 1):
         filtre = creationFiltre01(matrice)
-        print('filtre 01')
+        affichage_filtre.config(text='filtre : damier (01)')
     elif (matrice[22][8] == 1) and (matrice[23][8] == 0):
         filtre = creationFiltre10(matrice)
-        print('filtre 10')
+        affichage_filtre.config(text='filtre : lignes horizontales (10)')
     else:
         filtre = creationFiltre11(matrice)
-        print('filtre 11')
+        affichage_filtre.config(text='filtre : lignes verticales (11)')
 
     
     for i in range(nbrLig(matrice)):
@@ -405,6 +405,7 @@ def scanner(matrice):
             
     #Le QR Code est chargé et conforme
     #On applique le filtre au QR Code
+    filtre(matrice)
     m_filtre = filtre(matrice)
 
     # on récupère les informations dans des listes de 7 bits
@@ -418,7 +419,7 @@ def scanner(matrice):
         info4bits.append(correction_erreurs(info7bits[k]))
 
     if matrice[24][8] == 0:
-        print('données numériques')
+        affichage_donnees.config(text='données : numériques')
             # si ce sont des données numériques
         for m in info4bits:
             bin = ''
@@ -426,7 +427,7 @@ def scanner(matrice):
                 bin += str(c)
             message += str(hex(int(bin,2)))
     else:
-        print('données brutes')
+        affichage_donnees.config(text='données : brutes')
         for m in range(0, len(info4bits), 2):
             l = info4bits[m] + info4bits[m+1]
             bin = ''
@@ -451,23 +452,26 @@ racine.title("Projet : Lecture de QR Code")
 ### Création des widgets
 
 #bouton_charger = tk.Button(racine, text='charger', command=lambda:charger(racine))
-bouton_charger = tk.Button(racine, text='charger', command=init_matQRC)
-bouton_scanner = tk.Button(racine, text='scanner', command=lambda: scanner(mat_QRC))
-bouton_sauvegarder = tk.Button(racine, text='sauvegarder')
-bouton_quitter = tk.Button(racine, text='quitter', command=fermer_fenetre)
+bouton_charger = tk.Button(racine, text='charger', font = ("helvetica", "15"), command=init_matQRC)
+bouton_scanner = tk.Button(racine, text='scanner', font = ("helvetica", "15"), command=lambda: scanner(mat_QRC))
+bouton_quitter = tk.Button(racine, text='quitter', font = ("helvetica", "15"), command=fermer_fenetre)
 
-affichage_texte = tk.Label(racine, text='')
-affichage_blocs = tk.Label(racine, text='')
+affichage_texte = tk.Label(racine, text='', font = ("helvetica", "15"))
+affichage_filtre = tk.Label(racine, text='', font = ("helvetica", "15"))
+affichage_donnees = tk.Label(racine, text='', font = ("helvetica", "15"))
+affichage_blocs = tk.Label(racine, text='', font = ("helvetica", "15"))
 
 
 ### Positionnement des widgets
 
 bouton_charger.grid(column=0, row=0)
 bouton_scanner.grid(column=0, row=1)
-bouton_sauvegarder.grid(column=0, row=2)
 bouton_quitter.grid(column=0, row=3)
 
-affichage_texte.grid(column=1, row=3)
-affichage_blocs.grid(column=1, row=4)
+affichage_texte.grid(column=0, row=4, columnspan=2)
+affichage_filtre.grid(column=0, row=5, columnspan=2)
+affichage_donnees.grid(column=0, row=6, columnspan=2)
+affichage_blocs.grid(column=0, row=7, columnspan=2)
+
 
 racine.mainloop()
